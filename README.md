@@ -12,11 +12,8 @@ these data remain under-utilized both because the raw data are hard to
 obtain and there is a lack of statistical methods and software for
 processing and interpreting the data.
 
-This assignment makes use of data from a personal activity monitoring
-device. This device collects data at 5 minute intervals through out the
-day. The data consists of two months of data from an anonymous
-individual collected during the months of October and November, 2012
-and include the number of steps taken in 5 minute intervals each day.
+
+
 
 ## Data
 
@@ -152,7 +149,7 @@ need to submit the 40 character SHA-1 hash (as string of numbers from
 0-9 and letters from a-f) that identifies the repository commit that
 contains the version of the files you want to submit. You can do this
 in GitHub by doing the following:
-
+Da
 1. Go into your GitHub repository web page for this assignment
 
 2. Click on the "?? commits" link where ?? is the number of commits you have in the repository. For example, if you made a total of 10 commits to this repository, the link should say "10 commits".

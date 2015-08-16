@@ -1,0 +1,85 @@
+# Reproducible Research Assignment_Coursera
+
+## Introduction
+The raw data [resource](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip)[52K] for this assignment was collected by an activity device monitoring every 5 minutes from an anonymous individual on October and November, 2012, with 17,568 observations in total.
+
+To make codes readable:
+
+```r
+library(knitr)
+opts_chunk$set(echo=T)
+```
+
+
+## Getting and cleaning data
+```r
+## return a data.frame
+data <- read.csv(unz("desktop/activity.zip", "activity.csv"),header=T, quote="\"", sep=",", colClasses=c("numeric", "Date", "numeric"))
+```
+
+
+## The mean total number of steps taken per day?
+```r
+## ignore the missing value
+data.nna <- na.omit(data)
+## sum up steps per day
+daily <- rowsum(data.nna$steps, format(data.nna$date,"%Y-%m-%d"))
+## Histogram of the steps per day
+daily <- data.frame(daily)
+names(daily) <- ("steps")
+## Unsolved: margin too large
+hist(daily$steps, main = "Daily Steps", xlab = "steps")
+## mean and median
+mean(daily$steps)
+median(daily$steps)
+```
+
+The mean value total number of steps per day is 10766, while median is 10765.
+
+
+## The averaged daily activity pattern
+```r
+## integrate interval mean steps
+library(plyr)
+intervalsteps <- ddply(data.nna,~interval, summarise, mean=mean(steps))
+## plotting
+library(ggplot2)
+qplot(data = intervalsteps, geom = "line",x = interval, xlab = "Interval (5 min)", y = mean, ylab = "mean steps", main = "Averaged steps per 5-minutes")
+## which interval contains the most steps
+intervalsteps[which.max(intervalsteps$mean),]
+```
+
+The interval with the most steps:
+
+max.mean: 206.17, interval: 835
+
+
+## Imputing missing values
+```r
+## Amount of missing values
+sum(is.na(data))
+## Filling in with 0
+data0na <- data
+data0na[is.na(data0na)] <- 0
+## Plotting daily steps
+hist(data0na$steps, main = "Daily steps without missing value", xlab = "steps")
+mean(data0na$steps)
+median(data0na$steps)
+```
+
+Since the missing value is replaced by 0, results are identical to the estimates from the first session.
+
+
+## Are activity patterns between weekdays and weekends different?
+```r
+## new factor with two levels: "weekday", "weekend"
+data$weekend <- weekdays(data$date) == "Saturday" | weekdays(data$date) == "Sunday"
+data$weekend <- factor(data$weekend, levels = c(F, T), labels = c("Weekday", "Weekend"))
+
+activity <- ddply(data, .(interval, weekend), summarize, steps = mean(steps, na.rm = T))
+
+## time series panel plot
+library(lattice)
+xyplot(steps ~ interval | weekend, activity,type = "l", layout = c(1, 2),main = "Activity Patterns of Weekend and Weekday",xlab = "Interval",ylab = "Steps")
+```
+
